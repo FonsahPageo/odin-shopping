@@ -1,10 +1,33 @@
-.items{
-    display: grid;
-    grid: 1fr 1fr 1fr / 1fr 1fr 1fr;
+body {
+    display: flex;
+    flex-direction: column;
 }
 
-.box{
+.items {
+    display: grid;
+    grid: repeat(3, 1fr) / repeat(3, 1fr);
+    justify-content: center;
+}
+
+.box {
     display: flex;
-    border: 1px solid #333;
+    flex-direction: column;
+    padding: 50px;
+    gap: 10px;
+}
+
+nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+nav ul li {
+    float: left;
     padding: 20px;
+    list-style-type: none;
+}
+
+img{
+    width: 100%;
 }
