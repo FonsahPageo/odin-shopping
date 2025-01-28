@@ -1,6 +1,7 @@
 import { NavBar } from "./navbar";
 import { Footer } from "./footer";
 
+
 const Cart = () => {
     return (
         <div>

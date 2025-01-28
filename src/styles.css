@@ -12,7 +12,7 @@ body {
 .box {
     display: flex;
     flex-direction: column;
-    padding: 50px;
+    padding: 20px;
     gap: 10px;
 }
 
@@ -30,4 +30,18 @@ nav ul li {
 
 img{
     width: 100%;
+}
+
+input[type="number"]{
+    padding: 10px;
+}
+
+input.error {
+    border: 2px solid red;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.8rem;
+    margin: 5px 0;
 }
