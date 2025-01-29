@@ -12,6 +12,7 @@ import juice from "./images/juice.jpg";
 import laptop from "./images/laptop.jpg";
 import shoe from "./images/shoe.jpg";
 import { Link } from "react-router-dom";
+import { useCart } from "./usecart";
 
 const items = [
   {
@@ -64,90 +65,83 @@ const items = [
 const HomePage = () => {
   const [quantities, setQuantities] = useState({});
   const [errors, setErrors] = useState({});
-  const [cart, setCart] = useState([]);
-  const [isCartVisible, setIsCartVisible] = useState(false);
+  const { cart, addToCart } = useCart();  // Use the cart context
 
   const handleQuantityChange = (itemName, value) => {
-    setQuantities((prev) => ({
-      ...prev,
-      [itemName]: value,
-    }));
-    // Clear error when user starts typing
-    if (errors[itemName]) {
-      setErrors((prev) => ({
-        ...prev,
-        [itemName]: null,
+      setQuantities(prev => ({
+          ...prev,
+          [itemName]: value
       }));
-    }
+      if (errors[itemName]) {
+          setErrors(prev => ({
+              ...prev,
+              [itemName]: null
+          }));
+      }
   };
 
   const handleAddToCart = (item) => {
-    const quantity = quantities[item.name];
+      const quantity = quantities[item.name];
 
-    // Validate quantity
-    if (!quantity || quantity <= 0) {
-      setErrors((prev) => ({
-        ...prev,
-        [item.name]: "Please enter a valid quantity",
+      if (!quantity || quantity <= 0) {
+          setErrors(prev => ({
+              ...prev,
+              [item.name]: "Please enter a valid quantity"
+          }));
+          return;
+      }
+
+      const cartItem = {
+          ...item,
+          quantity: parseInt(quantity)
+      };
+
+      addToCart(cartItem);
+      
+      setQuantities(prev => ({
+          ...prev,
+          [item.name]: ""
       }));
-      return;
-    }
 
-    // Add to cart
-    const cartItem = {
-      ...item,
-      quantity: parseInt(quantity),
-    };
-
-    setCart((prev) => [...prev, cartItem]);
-
-    // Clear quantity after adding to cart
-    setQuantities((prev) => ({
-      ...prev,
-      [item.name]: "",
-    }));
+      alert(`Added ${quantity} ${item.name}(s) to cart`);
   };
 
   return (
-    <div>
-      <NavBar />
-
-      {/* Cart Summary */}
-      <div className="cart-summary">
-        <Link to="cart">
-          <button
-            className="cart-toggle"
-            onClick={() => setIsCartVisible(!isCartVisible)}
-          >
-            🛒 Cart ({cart.length} items)
-          </button>
-        </Link>
-      </div>
-
-      {/* Items Grid */}
-      <div className="items">
-        {items.map((item, index) => (
-          <div className="box" key={index}>
-            <img src={item.image} alt={`${item.name} Image`} />
-            <h2>{item.name}</h2>
-            <p>{item.description}</p>
-            <input
-              type="number"
-              min="1"
-              value={quantities[item.name] || ""}
-              onChange={(e) => handleQuantityChange(item.name, e.target.value)}
-              className={errors[item.name] ? "error" : ""}
-              placeholder="Enter Quantity"
-            />
-            {errors[item.name] && (
-              <p className="error-message">{errors[item.name]}</p>
-            )}
-            <button onClick={() => handleAddToCart(item)}>Add to Cart +</button>
+      <div>
+          <NavBar />
+          <div className="cart-summary">
+              <Link to="/cart">
+                  <button className="cart-toggle">
+                      🛒 Cart ({cart.length} items)
+                  </button>
+              </Link>
           </div>
-        ))}
+
+          <div className="items">
+              {items.map((item, index) => (
+                  <div className="box" key={index}>
+                      <img src={item.image} alt={`${item.name} Image`} />
+                      <h2>{item.name}</h2>
+                      <p>{item.description}</p>
+                      <input
+                          type="number"
+                          min="1"
+                          value={quantities[item.name] || ""}
+                          onChange={(e) => handleQuantityChange(item.name, e.target.value)}
+                          className={errors[item.name] ? "error" : ""}
+                          placeholder="Enter Quantity"
+                      />
+                      {errors[item.name] && (
+                          <p className="error-message">{errors[item.name]}</p>
+                      )}
+                      <button onClick={() => handleAddToCart(item)}>
+                          Add to Cart +
+                      </button>
+                  </div>
+              ))}
+          </div>
+          <Footer />
       </div>
-      <Footer />
-    </div>
   );
 };
 
